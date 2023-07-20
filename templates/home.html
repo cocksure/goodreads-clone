@@ -1,61 +1,66 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %} Home page {% endblock title%}
+{% block title %} Home page {% endblock title %}
 
 {% block content %}
-    <h2>All reviews</h2>
-    {% for review in page_obj %}
-        <div class="container posts-content">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card mb-4">
-                      <div class="card-body">
-                        <div class="media mb-3">
-                          <img src="{{ review.user.profile_picture.url }}" class="d-block ui-w-40 rounded-circle" alt="profile pic">
-                          <div class="media-body ml-3">
-                            <b>{{ review.user.username }}</b> rated to this book {{ review.stars_given }} stars
-                            <div class="text-muted small">{{ review.created_at }}</div>
-                          </div>
-                        </div>
+    <h2 class="text-center">All reviews</h2><hr>
 
-                        <p>
-                            {{ review.comment | truncatechars:300 }}
-                        </p>
-                          <a class="cover-pic text-center" href=""><img src="{{ review.book.cover_picture.url }}"></a>
-                      </div>
-                    </div>
+    <div class="cards">
+    {% for review in page_obj %}
+        <div class="card mb-5">
+            <div class="card__image-holder">
+                <img class="card__image " src="{{ review.book.cover_picture.url }}" alt="wave"/>
+            </div>
+            <div class="card-title">
+                <a href="#" class="toggle-info btn">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                </a>
+                <h2>
+                    <img src="{{ review.user.profile_picture.url }}" class="d-block ui-w-40 rounded-circle"
+                         alt="profile pic">
+                    <b>{{ review.user.username }}</b>
+                </h2>
+                rated this book {{ review.stars_given }} stars
+                <div class="text-muted small">{{ review.created_at }}</div>
+            </div>
+            <div class="card-flap flap1">
+                <div class="card-description">
+                    {{ review.comment | truncatechars:300 }}
                 </div>
+                <div class="card-flap flap2"></div>
             </div>
         </div>
-
     {% endfor %}
+</div>
+
 
     <nav aria-label="Page navigation example">
-            <ul class="pagination pagination-sm">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1">&laquo;</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
-                {% endif %}
+        <ul class="pagination pagination-sm">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
 
-                {% for i in page_obj.paginator.page_range %}
-                    <li class="page-item {% if i == page_obj.number %}active{% endif %}">
-                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                    </li>
-                {% endfor %}
+            {% for i in page_obj.paginator.page_range %}
+                <li class="page-item {% if i == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endfor %}
 
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
 {% endblock content %}

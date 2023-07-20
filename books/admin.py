@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Book, BookAuthor, BookReview, Author
+from .models import Book, BookAuthor, BookReview, Author, Categories
 
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ('title', 'isbn')
-    list_display = ('id', 'title', 'isbn', 'description')
+    list_display = ('id', 'title', 'category', 'isbn', 'description')
+    list_filter = ('category', )
 
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -21,7 +22,13 @@ class BookReviewAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'book', 'stars_given')
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    search_fields = ('name',)
+
+
 admin.site.register(Book, BookAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(BookAuthor, BookAuthorAdmin)
 admin.site.register(BookReview, BookReviewAdmin)
+admin.site.register(Categories, CategoryAdmin)

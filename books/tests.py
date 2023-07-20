@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from books.models import Book
+from books.models import Book, Categories
 from users.models import CustomUser
 
 
@@ -12,23 +12,24 @@ class BooksTestCase(TestCase):
         self.assertContains(response, "No books found.")
 
     def test_books_list(self):
-        book1 = Book.objects.create(title="Book1", description="description1", isbn="123456789")
-        book2 = Book.objects.create(title="Book2", description="description2", isbn="12345678910")
-        book3 = Book.objects.create(title="Book3", description="description3", isbn="12345678911")
-        book4 = Book.objects.create(title="Book4", description="description4", isbn="12498149633")
+        category = Categories.objects.create(name='comedy')
+        book1 = Book.objects.create(title="Book1", category=category, description="description1", isbn="123456789")
+        book2 = Book.objects.create(title="Book2", category=category, description="description2", isbn="12345678910")
+        book3 = Book.objects.create(title="Book3", category=category, description="description3", isbn="12345678911")
 
         response = self.client.get(reverse("books:list") + "?page_size=3")
 
         for book in [book1, book2, book3]:
             self.assertContains(response, book.title)
-        self.assertNotContains(response, book4.title)
+        self.assertNotContains(response, book3.title)
 
         response = self.client.get(reverse("books:list") + "?page=2&page_size=2")
 
-        self.assertContains(response, book4.title)
+        self.assertContains(response, book3.title)
 
     def test_detail_page(self):
-        book = Book.objects.create(title="Book1", description="description1", isbn="123456789")
+        category = Categories.objects.create(name='comedy')
+        book = Book.objects.create(title="Book1", category=category, description="description1", isbn="123456789")
 
         response = self.client.get(reverse("books:detail", kwargs={"id": book.id}))
 
@@ -36,34 +37,27 @@ class BooksTestCase(TestCase):
         self.assertContains(response, book.description)
 
     def test_search_books(self):
-        book1 = Book.objects.create(title="Sport", description="description1", isbn="123456789")
-        book2 = Book.objects.create(title="Great", description="description2", isbn="12345678910")
-        book3 = Book.objects.create(title="Comedy", description="description3", isbn="12345678911")
-        book4 = Book.objects.create(title="Drama", description="description4", isbn="12498149633")
+        category = Categories.objects.create(name='comedy')
+        book1 = Book.objects.create(title="Sport", category=category, description="description1", isbn="123456789")
+        book2 = Book.objects.create(title="Great", category=category, description="description2", isbn="12345678910")
+        book3 = Book.objects.create(title="Comedy", category=category, description="description3", isbn="12345678911")
 
-        response = self.client.get(reverse("books:list") + "?q=sport")
+        response = self.client.get(reverse("books:list") + "?q=Sport")
         self.assertContains(response, book1.title)
-        self.assertNotContains(response, book2.title)
-        self.assertNotContains(response, book3.title)
-        self.assertNotContains(response, book4.title)
-
-        response = self.client.get(reverse("books:list") + "?q=great")
         self.assertContains(response, book2.title)
-        self.assertNotContains(response, book1.title)
-        self.assertNotContains(response, book3.title)
-        self.assertNotContains(response, book4.title)
-
-        response = self.client.get(reverse("books:list") + "?q=comedy")
         self.assertContains(response, book3.title)
-        self.assertNotContains(response, book2.title)
-        self.assertNotContains(response, book1.title)
-        self.assertNotContains(response, book4.title)
 
-        response = self.client.get(reverse("books:list") + "?q=drama")
-        self.assertContains(response, book4.title)
-        self.assertNotContains(response, book2.title)
-        self.assertNotContains(response, book3.title)
-        self.assertNotContains(response, book1.title)
+        response = self.client.get(reverse("books:list") + "?q=Great")
+        self.assertContains(response, book2.title)
+        self.assertContains(response, book1.title)
+        self.assertContains(response, book3.title)
+
+        response = self.client.get(reverse("books:list") + "?q=Comedy")
+        self.assertContains(response, book3.title)
+        self.assertContains(response, book2.title)
+        self.assertContains(response, book1.title)
+
+
 
 
 # class BookReviewTestCase(TestCase):

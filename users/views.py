@@ -44,7 +44,7 @@ class LoginView(View):
 
             messages.success(request, "You have successfully logged in.")
 
-            return redirect("books:list")
+            return redirect("landing_page")
         else:
             return render(request, 'users/login.html', {"login_form": login_form})
 

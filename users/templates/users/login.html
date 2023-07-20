@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}Login page {% endblock title %}
 
 {% block content %}
 
-    <div class="row">
-        <div class="col-4">
-            <h1>Login page</h1><hr>
+    <div class="row justify-content-center mt-5 ">
+        <div class="col-lg-4 col-md-4 text-center shadow rounded-4 p-3">
+            <img class="register_pic" src="{% static 'images/png-transparent-default-avatar.png' %}">
             <form method="post">{% csrf_token %}
                 {{ login_form | crispy }}
                 <button class="btn btn-primary w-100 mb-4" type="submit">Submit</button>

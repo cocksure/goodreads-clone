@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Comedy {% endblock title %}
+
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <img class="img-thumbnail" src="{{ author.picture.url }}">
+                    </div>
+
+                    <div class="col-md-6 text-">
+                        <p>Name: </p>
+                        <h3 >{{ author.first_name }}  {{ author.last_name }}</h3><hr>
+                        <p>Email: </p>
+                        <h3 >  {{ author.email }}  </h3><hr>
+                        <p>Bio: </p>
+                        <h3><span>Bio: </span> {{ author.bio }}  </h3><hr>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+
+{% endblock content %}

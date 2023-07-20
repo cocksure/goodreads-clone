@@ -2,6 +2,10 @@
     width: 25%;
     border-radius: 50%;
 }
+.register_pic {
+    width: 25%;
+    border-radius: 15%;
+}
 
 .profile-pic_review {
     width: 90%;
@@ -13,7 +17,16 @@
 }
 
 .navbar {
-    background-color: lightblue;
+    background-color: #787188;
+    color: white;
+}
+.nav-link  {
+    color: white;
+
+}
+
+.navbar-brand {
+    color: white;
 }
 
 .star-rating {
@@ -75,3 +88,27 @@
 .default-style .ui-bordered {
     border: 1px solid rgba(24,28,33,0.06);
 }
+
+.custom-nav {
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.custom-nav-link {
+    color: black;
+  font-weight: bold;
+}
+.custom-nav-link:active {
+        color: white;
+    background-color: #787188;
+    border-radius: 5px;
+}
+
+.custom-nav-link:hover {
+    color: white;
+    background-color: #787188;
+    border-radius: 5px;
+}
+
+
+

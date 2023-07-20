@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Detective{% endblock title %}
+
+{% block content %}
+
+
+
+
+    <div class="book-cards mb-5" id="book-cards">
+        {% if detective_books %}
+            {% for detective_book in detective_books %}
+                <div class="book-card" data-category="{{ detective_book.category }}">
+                    <div class="content-wrapper">
+                        <img src="{{ detective_book.cover_picture.url }}" alt="" class="book-card-img">
+                        <div class="card-content">
+                            <div class="book-name">{{ detective_book.title }}</div>
+                            <div class="book-by">by {{ detective_book.book_author }}</div>
+                            {#                            <div class="rate">#}
+                            {#                                <fieldset class="rating book-rate">#}
+                            {#                                    <input type="checkbox" id="star-c1" name="rating" value="5">#}
+                            {#                                    <label class="full" for="star-c1"></label>#}
+                            {#                                    <input type="checkbox" id="star-c2" name="rating" value="4">#}
+                            {#                                    <label class="full" for="star-c2"></label>#}
+                            {#                                    <input type="checkbox" id="star-c3" name="rating" value="3">#}
+                            {#                                    <label class="full" for="star-c3"></label>#}
+                            {#                                    <input type="checkbox" id="star-c4" name="rating" value="2">#}
+                            {#                                    <label class="full" for="star-c4"></label>#}
+                            {#                                    <input type="checkbox" id="star-c5" name="rating" value="1">#}
+                            {#                                    <label class="full" for="star-c5"></label>#}
+                            {#                                </fieldset>#}
+                            {#                                <span class="book-voters card-vote">1.987 voters</span>#}
+                            {#                            </div>#}
+                            <div class="book-sum card-sum">
+                                {{ detective_book.description }}
+                            </div>
+                            <a class="detail-view" href="{% url 'books:detail' detective_book.id %}">
+                                ...view detail
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No detective books found.</p>
+        {% endif %}
+    </div>
+
+
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for i in page_obj.paginator.page_range %}
+                <li class="page-item {% if i == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+{% endblock content %}

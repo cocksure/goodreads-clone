@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 
 from books.forms import BookReviewForm
-from books.models import Book, BookReview
+from books.models import Book, BookReview, Categories, BookAuthor, Author
 
 
 # class BooksView(ListView):
@@ -17,22 +17,88 @@ from books.models import Book, BookReview
 #     paginate_by = 3
 
 
+class AuthorsView(View):
+    def get(self, request):
+        authors = Author.objects.all().order_by('-id')
+
+        context = {
+            'authors': authors
+        }
+        return render(request, 'authors/authors_list.html', context)
+
+
+def search_books(query):
+    books = Book.objects.filter(title__icontains=query)
+    return books
+
+
 class BooksView(View):
     def get(self, request):
-        books = Book.objects.all().order_by('id')
+        categories = Categories.objects.all()
         search_query = request.GET.get('q', '')
-        if search_query:
-            books = books.filter(title__icontains=search_query)
-        page_size = request.GET.get("page_size", 3)
+        books = search_books(search_query) if search_query else Book.objects.all().order_by('id')
+
+        page_size = request.GET.get("page_size", 4)
         paginator = Paginator(books, page_size)
 
         page_num = request.GET.get("page", 1)
         page_obj = paginator.get_page(page_num)
 
-        return render(
-            request,
-            "books/list.html",
-            {"page_obj": page_obj, "search_query": search_query})
+        context = {
+            'categories': categories,
+            'page_obj': page_obj,
+            'search_query': search_query
+        }
+
+        return render(request, "books/list.html", context)
+
+
+class ComedyBookView(ListView):
+    template_name = 'books/comedy.html'
+    context_object_name = 'comedy_books'
+    paginate_by = 3
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('q', '')
+        return search_books(search_query) if search_query else Book.objects.filter(category_id=1)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Categories.objects.all()
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+
+class FantasticBookView(ListView):
+    template_name = 'books/fantastic.html'
+    context_object_name = 'fantastic_books'
+    paginate_by = 3
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('q', '')
+        return search_books(search_query) if search_query else Book.objects.filter(category_id=2)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Categories.objects.all()
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+
+class DetectiveBookView(ListView):
+    template_name = 'books/detective.html'
+    context_object_name = 'detective_books'
+    paginate_by = 3
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('q', '')
+        return search_books(search_query) if search_query else Book.objects.filter(category_id=3)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Categories.objects.all()
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
 
 
 # class BookDetailView(DetailView):
@@ -55,16 +121,18 @@ class BookDetailView(View):
 class AddReviewView(LoginRequiredMixin, View):
     def post(self, request, id):
         book = Book.objects.get(id=id)
-        review_form = BookReviewForm(data=request.POST)
+        review_form = BookReviewForm()
 
-        if review_form.is_valid():
-            BookReview.objects.create(
-                book=book,
-                user=request.user,
-                stars_given=review_form.cleaned_data['stars_given'],
-                comment=review_form.cleaned_data['comment']
-            )
-            return redirect(reverse("books:detail", kwargs={"id": book.id}))
+        if request.method == 'POST':
+            review_form = BookReviewForm(request.POST)
+            if review_form.is_valid():
+                BookReview.objects.create(
+                    book=book,
+                    user=request.user,
+                    stars_given=review_form.cleaned_data['stars_given'],
+                    comment=review_form.cleaned_data['comment']
+                )
+                return redirect(reverse("books:detail", kwargs={"id": book.id}))
 
         return render(request, "books/detail.html", {"book": book, "review_form": review_form})
 
@@ -118,3 +186,14 @@ class DeleteReviewView(LoginRequiredMixin, View):
         messages.success(request, "You have successfully deleted this review")
 
         return redirect(reverse("books:detail", kwargs={"id": book_id}))
+
+
+class AuthorsDetailView(View):
+    def get(self, request, id):
+        author = Author.objects.get(id=id)
+
+        context = {
+            'author': author
+        }
+        return render(request, 'authors/authors_detail.html', context)
+

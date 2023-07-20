@@ -3,11 +3,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import landing_page, home_page
+from .views import LandingPage, home_page
 
 
 urlpatterns = [
-    path("", landing_page, name='landing_page'),
+    path("", LandingPage.as_view(), name='landing_page'),
     path("home/", home_page, name='home_page'),
     path('users/', include('users.urls')),
     path('books/', include('books.urls')),
